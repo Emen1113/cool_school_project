@@ -2,7 +2,7 @@ export const APP_NAME = "92VskRanks";
 export const APP_TAGLINE = "Vote. Rank. Rise.";
 
 export const ALLOWED_EMAIL_DOMAINS = (
-  process.env.NEXT_PUBLIC_ALLOWED_EMAIL_DOMAINS ?? "school.edu,student.edu"
+  process.env.NEXT_PUBLIC_ALLOWED_EMAIL_DOMAINS ?? "gmail.com,edu.riga.lv"
 )
   .split(",")
   .map((d) => d.trim().toLowerCase())

@@ -132,7 +132,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             id="email"
             type="email"
             required
-            placeholder="you@school.edu"
+            placeholder="you@edu.riga.lv/you@gmail.com"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
