@@ -1,4 +1,4 @@
-export const APP_NAME = "CoolSchool";
+export const APP_NAME = "92VskRanks";
 export const APP_TAGLINE = "Vote. Rank. Rise.";
 
 export const ALLOWED_EMAIL_DOMAINS = (
