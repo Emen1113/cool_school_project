@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { GlassCard } from "@/components/ui/glass-card";
 import { APP_NAME } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
-import { validateSchoolEmail } from "@/lib/auth";
+import { validateSchoolEmail } from "@/lib/email";
 
 interface AuthFormProps {
   mode: "login" | "signup";
