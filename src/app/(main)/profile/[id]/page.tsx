@@ -1,38 +1,54 @@
 import { notFound, redirect } from "next/navigation";
 import { ProfileView } from "@/components/profile/profile-view";
-import { createClient } from "@/lib/supabase/server";
+import { getAuthUser } from "@/lib/auth";
 import { getProfile, getRatingHistory } from "@/services/profile.service";
 
 interface ProfilePageProps {
-  params: Promise<{ id: string }>;
+  params: {
+    id: string;
+  };
 }
 
-export default async function ProfilePage({ params }: ProfilePageProps) {
-  const { id } = await params;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default async function ProfilePage({
+  params,
+}: ProfilePageProps) {
+  const { id } = params;
 
-  const profileId = id === "me" ? user?.id : id;
-  if (!profileId) redirect("/login");
+  
+  if (id === "me") {
+    const user = await getAuthUser();
 
-  const [profile, history] = await Promise.all([
-    getProfile(profileId),
-    getRatingHistory(profileId),
-  ]);
+    if (!user) {
+      redirect("/login");
+    }
 
-  if (!profile || (profile.is_banned && user?.id !== profileId)) {
-    notFound();
+    redirect(`/profile/${user.id}`);
   }
 
-  const isOwn = user?.id === profile.id;
+  const user = await getAuthUser();
+
+  const [fetchedProfile, history] = await Promise.all([
+    getProfile(id),
+    getRatingHistory(id),
+  ]);
+
+  if (!fetchedProfile) {
+    if (user?.id === id) {
+      redirect("/settings");
+    }
+
+    return notFound();
+  }
+
+  if (fetchedProfile.is_banned && user?.id !== id) {
+    return notFound();
+  }
 
   return (
     <ProfileView
-      profile={profile}
+      profile={fetchedProfile}
       history={history}
-      isOwn={isOwn}
+      isOwn={user?.id === fetchedProfile.id}
       currentUserId={user?.id}
     />
   );

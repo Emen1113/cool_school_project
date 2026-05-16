@@ -1,3 +1,4 @@
+import { getAuthUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile, RatingHistory } from "@/types/database";
 
@@ -14,10 +15,7 @@ export async function getProfile(id: string): Promise<Profile | null> {
 }
 
 export async function getCurrentProfile(): Promise<Profile | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthUser();
   if (!user) return null;
   return getProfile(user.id);
 }

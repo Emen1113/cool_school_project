@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { MainShell } from "@/components/layout/main-shell";
 import { OnlineStatus } from "@/components/providers/online-status";
-import { createClient } from "@/lib/supabase/server";
+import { getAuthUser } from "@/lib/auth";
 import { isAdmin } from "@/services/admin.service";
 
 export default async function MainLayout({
@@ -10,10 +10,7 @@ export default async function MainLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getAuthUser();
 
   if (!user) {
     redirect("/login");
