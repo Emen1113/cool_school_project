@@ -4,11 +4,9 @@ import type { Profile, RatingHistory } from "@/types/database";
 
 export async function getProfile(id: string): Promise<Profile | null> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const { data, error } = await supabase.rpc("get_public_profile", {
+    p_profile_id: id,
+  });
 
   if (error || !data) return null;
   return data as Profile;

@@ -355,6 +355,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Public profile lookup (leaderboards, search links, etc.)
+CREATE OR REPLACE FUNCTION public.get_public_profile(p_profile_id UUID)
+RETURNS public.profiles AS $$
+  SELECT * FROM public.profiles
+  WHERE id = p_profile_id
+    AND (NOT is_banned OR auth.uid() = p_profile_id)
+  LIMIT 1;
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
 -- Is admin check
 CREATE OR REPLACE FUNCTION public.is_admin(p_user_id UUID)
 RETURNS BOOLEAN AS $$

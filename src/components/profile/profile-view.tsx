@@ -79,7 +79,9 @@ export function ProfileView({
           {getFullName(profile.first_name, profile.last_name)}
         </h1>
         <p className="text-white/50">{profile.grade}</p>
-        {profile.bio && <p className="mt-2 text-sm text-white/70">{profile.bio}</p>}
+        {isOwn && profile.bio && (
+          <p className="mt-2 text-sm text-white/70">{profile.bio}</p>
+        )}
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           <FireBadge score={Number(profile.fire_score)} streak={profile.streak_count} />
           {profile.streak_count >= 3 && (
@@ -121,7 +123,7 @@ export function ProfileView({
         ))}
       </div>
 
-      {history.length > 0 && (
+      {isOwn && history.length > 0 && (
         <div>
           <h2 className="mb-3 font-bold text-white">Rating history</h2>
           <ul className="flex flex-col gap-1">

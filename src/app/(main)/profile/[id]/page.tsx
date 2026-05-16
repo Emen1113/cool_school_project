@@ -1,54 +1,42 @@
 import { notFound, redirect } from "next/navigation";
 import { ProfileView } from "@/components/profile/profile-view";
 import { getAuthUser } from "@/lib/auth";
+import { isUuid } from "@/lib/utils";
 import { getProfile, getRatingHistory } from "@/services/profile.service";
 
-interface ProfilePageProps {
-  params: {
-    id: string;
-  };
-}
+type ProfilePageProps = {
+  params: Promise<{ id: string }> | { id: string };
+};
 
-export default async function ProfilePage({
-  params,
-}: ProfilePageProps) {
-  const { id } = params;
+export default async function ProfilePage({ params }: ProfilePageProps) {
+  const { id } = await Promise.resolve(params);
 
-  
   if (id === "me") {
-    const user = await getAuthUser();
+    redirect("/profile/me");
+  }
 
-    if (!user) {
-      redirect("/login");
-    }
-
-    redirect(`/profile/${user.id}`);
+  if (!isUuid(id)) {
+    notFound();
   }
 
   const user = await getAuthUser();
+  const isOwn = user?.id === id;
 
-  const [fetchedProfile, history] = await Promise.all([
-    getProfile(id),
-    getRatingHistory(id),
-  ]);
-
-  if (!fetchedProfile) {
-    if (user?.id === id) {
-      redirect("/settings");
-    }
-
-    return notFound();
+  if (isOwn) {
+    redirect("/profile/me");
   }
 
-  if (fetchedProfile.is_banned && user?.id !== id) {
-    return notFound();
+  const profile = await getProfile(id);
+
+  if (!profile || profile.is_banned) {
+    notFound();
   }
 
   return (
     <ProfileView
-      profile={fetchedProfile}
-      history={history}
-      isOwn={user?.id === fetchedProfile.id}
+      profile={profile}
+      history={[]}
+      isOwn={false}
       currentUserId={user?.id}
     />
   );
